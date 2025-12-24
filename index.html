@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Haikal Muh Darda — Digital Soul Architect. Inspired by Juice WRLD. Building identity in code, one honest line at a time.">
+  <meta name="theme-color" content="#020617">
+  <title>HMDAR | Digital Soul: The Infinite Loop</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --hue: 260;
+      --sat: 80%;
+      --lgt: 8%;
+      --accent: linear-gradient(135deg, #7f5af0, #22d3ee, #2cb67d);
+      --juice: linear-gradient(135deg, #ff0055, #ffaa00);
+      --glow: rgba(127, 90, 240, 0.6);
+      --juice-glow: rgba(255, 0, 85, 0.5);
+      --card: rgba(255, 255, 255, 0.06);
+      --text: #e5e7eb;
+      --text-dim: #94a3b8;
+      --border: rgba(127, 90, 240, 0.15);
+      --font: 'Space Grotesk', system-ui, sans-serif;
+      --transition: cubic-bezier(0.16, 1, 0.3, 1);
+      scroll-behavior: smooth;
+    }
+
+    [data-theme="light"] {
+      --lgt: 95%;
+      --text: #1e293b;
+      --text-dim: #64748b;
+      --card: rgba(241, 245, 249, 0.7);
+      --border: rgba(127, 90, 240, 0.1);
+      --glow: rgba(34, 211, 238, 0.3);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: hsl(var(--hue), var(--sat), var(--lgt));
+      color: var(--text);
+      font-family: var(--font);
+      line-height: 1.7;
+      overflow-x: hidden;
+      position: relative;
+      min-height: 100vh;
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(127, 90, 240, 0.1) 0%, transparent 20%),
+        radial-gradient(circle at 90% 80%, rgba(34, 211, 238, 0.08) 0%, transparent 20%);
+      transition: background 1.2s var(--transition);
+    }
+
+    #stars { 
+      position: fixed; top: 0; left: 0; 
+      width: 100%; height: 100%; 
+      z-index: -2; 
+      pointer-events: none;
+    }
+
+    .theme-toggle {
+      position: fixed;
+      top: 24px;
+      right: 24px;
+      z-index: 1000;
+      background: var(--card);
+      border: 1px solid var(--border);
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: transform 0.3s;
+    }
+    .theme-toggle:hover {
+      transform: rotate(20deg);
+    }
+    .theme-toggle svg { width: 20px; height: 20px; fill: var(--text); }
+
+    .audio-controls {
+      position: fixed;
+      bottom: 20px;
+      right: 90px;
+      z-index: 1000;
+      display: flex;
+      gap: 10px;
+    }
+    .audio-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--card);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .audio-btn:hover {
+      transform: scale(1.1);
+      background: rgba(127, 90, 240, 0.2);
+    }
+    .audio-wave {
+      display: flex;
+      gap: 2px;
+      height: 16px;
+    }
+    .wave-bar {
+      width: 3px;
+      background: var(--text);
+      opacity: 0.6;
+      animation: wave 1.5s infinite ease-in-out;
+    }
+    .wave-bar:nth-child(2) { animation-delay: 0.2s; }
+    .wave-bar:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes wave {
+      0%, 100% { height: 4px; }
+      50% { height: 16px; }
+    }
+
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
+    .section { 
+      padding: 120px 0; 
+      position: relative;
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.8s, transform 0.8s;
+    }
+    .section.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 2rem;
+      position: relative;
+    }
+    .hero h1 {
+      font-size: clamp(3.5rem, 8vw, 6.5rem);
+      font-weight: 700;
+      background: var(--accent);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 100px var(--glow);
+      letter-spacing: -1px;
+      opacity: 0;
+      animation: fadeInUp 1.2s forwards 0.3s;
+    }
+    .hero-intro {
+      max-width: 800px;
+      margin: 2rem auto;
+      font-size: 1.25rem;
+      line-height: 1.9;
+      opacity: 0;
+      animation: fadeIn 1.5s forwards 1s;
+      position: relative;
+      font-style: italic;
+    }
+
+    @keyframes fadeIn { to { opacity: 1; } }
+    @keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
+
+    .about-full {
+      display: flex;
+      gap: 3rem;
+      align-items: center;
+      margin-top: 2rem;
+    }
+    .about-avatar {
+      flex-shrink: 0;
+    }
+    .about-avatar div {
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      background: var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+      color: white;
+      font-weight: 700;
+    }
+    .about-details {
+      flex: 1;
+    }
+    .about-role {
+      color: #7f5af0;
+      margin: 0.5rem 0 1.5rem;
+      font-weight: 600;
+    }
+
+    .project-preview {
+      display: flex;
+      gap: 2rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+    .preview-img {
+      flex: 1;
+      min-width: 300px;
+      border-radius: 20px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    .preview-img img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    .preview-features {
+      flex: 1;
+      min-width: 300px;
+    }
+    .preview-features ul {
+      padding-left: 1.5rem;
+      margin-top: 1rem;
+      line-height: 1.8;
+    }
+    .preview-features li {
+      margin-bottom: 0.5rem;
+    }
+
+    .cards { 
+      display: grid; 
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
+      gap: 2rem; 
+      opacity: 0;
+      animation: fadeIn 1.2s forwards;
+    }
+    .card {
+      background: var(--card);
+      backdrop-filter: blur(24px);
+      border-radius: 24px;
+      padding: 2rem;
+      transition: all 0.6s var(--transition);
+      border: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    .card.visible {
+      opacity: 1;
+      transform: translateY(0);
+      transition-delay: calc(var(--delay) * 0.2s);
+    }
+    .card:hover { 
+      transform: translateY(-10px) scale(1.02); 
+      box-shadow: 0 25px 60px rgba(0,0,0,0.4);
+    }
+
+    .final-cta {
+      text-align: center;
+      padding: 4rem 2rem;
+      background: var(--card);
+      border-radius: 28px;
+      border: 1px solid var(--border);
+      margin: 4rem 0;
+    }
+    .cta-btn {
+      display: inline-block;
+      margin-top: 1.5rem;
+      padding: 1rem 2.5rem;
+      border-radius: 999px;
+      background: var(--juice);
+      color: white;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 1.2rem;
+      box-shadow: 0 0 40px var(--juice-glow);
+      transition: all 0.5s var(--transition);
+    }
+    .cta-btn:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 80px var(--juice-glow);
+    }
+
+    .social-hub {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      margin: 2rem 0;
+      flex-wrap: wrap;
+      opacity: 0;
+      animation: fadeIn 1.5s forwards;
+    }
+    .social-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.8rem 1.5rem;
+      border-radius: 999px;
+      background: var(--card);
+      color: var(--text);
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.4s var(--transition);
+      border: 1px solid var(--border);
+    }
+    .social-btn:hover {
+      transform: translateY(-5px) scale(1.05);
+      box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+      background: rgba(127, 90, 240, 0.15);
+    }
+    .social-icon { width: 24px; height: 24px; }
+    .dm-btn {
+      background: var(--juice);
+      color: white !important;
+      box-shadow: 0 0 40px var(--juice-glow);
+    }
+
+    #contactModal {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(2, 6, 23, 0.85);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 10000;
+      opacity: 0; 
+      visibility: hidden;
+      transition: all 0.4s;
+    }
+    #contactModal.active {
+      opacity: 1; 
+      visibility: visible;
+    }
+    .modal-content {
+      background: hsl(var(--hue), var(--sat), var(--lgt));
+      padding: 2.5rem;
+      border-radius: 28px;
+      max-width: 500px;
+      width: 90%;
+      border: 1px solid var(--border);
+      position: relative;
+      opacity: 0;
+      transform: scale(0.9);
+      transition: all 0.5s;
+    }
+    #contactModal.active .modal-content {
+      opacity: 1;
+      transform: scale(1);
+    }
+    .close-modal {
+      position: absolute;
+      top: 1.2rem; right: 1.2rem;
+      background: none; border: none;
+      color: var(--text-dim);
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+    .modal-h2 {
+      margin-bottom: 1.5rem;
+      font-size: 1.8rem;
+      background: var(--accent);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .contact-option {
+      padding: 1.2rem;
+      border-radius: 16px;
+      margin-bottom: 1rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .contact-option:hover {
+      background: rgba(127, 90, 240, 0.15);
+      transform: translateX(10px);
+    }
+
+    h2 {
+      font-size: 2.6rem;
+      margin: 2.5rem 0 2.8rem;
+      background: var(--accent);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: inline-block;
+      opacity: 0;
+      animation: fadeInUp 1s forwards;
+    }
+    h2.juice {
+      background: var(--juice);
+      text-shadow: 0 0 60px var(--juice-glow);
+    }
+
+    .activity-footer {
+      text-align: center;
+      margin-top: 2rem;
+      opacity: 0.7;
+      font-size: 0.95rem;
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+
+    @media (max-width: 768px) {
+      .about-full { flex-direction: column; text-align: center; }
+      .hero h1 { font-size: clamp(2.8rem, 10vw, 5rem); }
+      .section { padding: 80px 0; }
+      .project-preview { flex-direction: column; }
+    }
+  </style>
+  </head>
+
+<body>
+  <canvas id="stars"></canvas>
+
+  <div class="theme-toggle" id="themeToggle" aria-label="Switch theme">
+    <svg viewBox="0 0 24 24"><path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M12 21a9 9 0 110-18 9 9 0 010 18z"/></svg>
+  </div>
+
+  <audio id="bgMusic" preload="auto">
+    <source src="https://files.freemusicarchive.org/storage-freemusicarchive-org/music/no_curator/Dylan_Sitts/Digital_Dreams/Dylan_Sitts_-_01_-_Digital_Dreams.mp3" type="audio/mpeg">
+  </audio>
+  <div class="audio-controls">
+    <div class="audio-btn" id="audioToggle">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+        <polygon points="5 3 19 12 5 21 5 3"></polygon>
+      </svg>
+    </div>
+    <div class="audio-wave" id="audioWave" style="display:none;">
+      <div class="wave-bar"></div>
+      <div class="wave-bar"></div>
+      <div class="wave-bar"></div>
+    </div>
+  </div>
+
+  <div id="contactModal">
+    <div class="modal-content">
+      <button class="close-modal">&times;</button>
+      <h2 class="modal-h2">Hubungi Haikal</h2>
+      <p style="margin-bottom:1.5rem; opacity:0.85;">Pilih cara yang paling nyaman untukmu:</p>
+      
+      <div class="contact-option" onclick="window.open('https://instagram.com/haikaaalmd', '_blank')">
+        <div style="font-weight:600; display:flex; align-items:center; gap:0.75rem;">
+          <svg class="social-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 12c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5z"/><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="14" r="2"/></svg>
+          Instagram (Profile)
+        </div>
+      </div>
+      
+      <div class="contact-option" onclick="window.open('https://instagram.com/direct/t/17841463289263926', '_blank')">
+        <div style="font-weight:600; display:flex; align-items:center; gap:0.75rem; color:#ff0055;">
+          <svg class="social-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+          Kirim DM Langsung
+        </div>
+        <div style="font-size:0.9rem; opacity:0.7; margin-top:0.5rem;">Pesan otomatis: “Hi Haikal! Saw your Digital Soul.”</div>
+      </div>
+    </div>
+  </div>
+
+  <header>
+    <div style="text-align:center; padding:1.5rem 0; font-size:1.2rem; opacity:0.8;">
+      “Legends never die.” — HMDAR, 2025
+    </div>
+  </header>
+
+  <section class="hero">
+    <h1>HMDAR</h1>
+    <div class="hero-intro" id="dynamicIntro">
+      Aku membangun bukan hanya untuk berfungsi — tapi untuk <em>bermakna</em>. 
+      Setiap baris kode adalah jejak perasaan: kegelisahan, harapan, dan jiwa.
+    </div>
+  </section>
+
+  <main class="container">
+
+    <section class="section" id="aboutSection">
+      <h2>About My Digital Soul</h2>
+      <div class="about-full">
+        <div class="about-avatar">
+          <div>H</div>
+        </div>
+        <div class="about-details">
+          <h3>Haikal Muh Darda</h3>
+          <p class="about-role">Junior Programmer • Digital Identity Architect</p>
+          <p>Aku mulai coding di 2021, terinspirasi oleh keinginan untuk membuat sesuatu yang <strong>bermakna</strong>. Saat ini, aku fokus membangun tools yang indah, cepat, dan jujur — seperti lirik Juice WRLD.</p>
+          <p>Bagiku, kode bukan hanya logika. Ia adalah <em>cara terbaik untuk berbicara jujur</em> di dunia yang penuh topeng.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="projectSection">
+      <h2>Project Spotlight: TikTok Downloader V3.0</h2>
+      
+      <div class="project-preview">
+        <div class="preview-img">
+          <img src="image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='320' viewBox='0 0 600 320'%3E%3Crect width='600' height='320' fill='%230f172a'/%3E%3Ctext x='50%25' y='50%25' fill='%2394a3b8' font-size='18' text-anchor='middle'%3ETikTok Downloader V3.0%3C/text%3E%3C/svg%3E" alt="TikTok Downloader Preview">
+        </div>
+        <div class="preview-features">
+          <h3>Fitur Utama</h3>
+          <ul>
+            <li>✅ HD tanpa watermark</li>
+            <li>✅ Ekstraksi audio MP3</li>
+            <li>✅ 100% client-side — aman</li>
+            <li>✅ API Edge berkecepatan tinggi</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="cards">
+        <div class="card" style="--delay: 1;">
+          <h3>Why This Exists</h3>
+          <p>Aku lelah melihat tools downloader yang penuh iklan, watermark, dan malware. Aku ingin sesuatu yang <strong>bersih, cepat, dan jujur</strong> — seperti lirik Juice WRLD.</p>
+        </div>
+        <div class="card" style="--delay: 2;">
+          <h3>How It Works</h3>
+          <p>Menggunakan <strong>Vercel Edge Functions</strong> untuk bypass CORS. Video diekstrak langsung dari TikTok CDN tanpa proxy berat. Semua proses terjadi di sisi klien — <em>no server, no tracking</em>.</p>
+        </div>
+        <div class="card" style="--delay: 3;">
+          <h3>The Tech Soul</h3>
+          <p>Next.js App Router • TypeScript • Vercel Edge • CSS Houdini untuk animasi smooth • Fetch API dengan retry logic cerdas. Setiap baris kode ditulis untuk <strong>keandalan & keindahan</strong>.</p>
+        </div>
+      </div>
+
+      <div style="margin-top:3rem;">
+        <h3>Full Experience</h3>
+        <div style="border-radius:20px; overflow:hidden; border:1px solid var(--border); margin-top:1rem;">
+          <iframe src="https://tiktok-by-hmdar3.vercel.app/" 
+                  style="width:100%; height:520px; border:none; background:#000;"
+                  title="TikTok Downloader by HMDAR"
+                  loading="lazy"></iframe>
+        </div>
+        <div style="text-align:center; margin-top:1rem; opacity:0.7; font-size:0.95rem;">
+          🔒 100% client-side • No data stored • For education only
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="openSection">
+      <h2>Open For Collaboration</h2>
+      <div class="cards">
+        <div class="card" style="--delay: 1;">
+          <h3>What I'm Seeking</h3>
+          <ul style="padding-left:1.5rem; margin-top:1rem; line-height:1.8;">
+            <li>Magang Frontend (remote, Jan–Jun 2026)</li>
+            <li>Kolaborasi proyek open-source UI/UX</li>
+            <li>Job freelance: website personal branding</li>
+            <li>Mentorship dari senior engineer</li>
+          </ul>
+        </div>
+        <div class="card" style="--delay: 2;">
+          <h3>How I Work</h3>
+          <p>Aku percaya pada <strong>komunikasi jujur, kode bersih, dan deadline yang realistis</strong>. Setiap proyek aku anggap sebagai bagian dari identitasku — jadi aku tidak akan menyerahkan sesuatu yang kurang dari sempurna.</p>
+        </div>
+        <div class="card" style="--delay: 3;">
+          <h3>My Ideal Partner</h3>
+          <p>Tim yang menghargai <strong>estetika, performa, dan makna</strong>. Bukan hanya "bikin jalan", tapi "bikin berkesan".</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="soulSection">
+      <h2 class="juice">The Soul Behind The Code</h2>
+      <div class="hero-intro">
+        Mengapa aku membangun? Bukan untuk uang. Bukan untuk pamer.<br><br>
+        
+        Aku membangun karena <strong>kode adalah cara terbaikku berbicara</strong>.<br>
+        Saat kata-kata gagal menggambarkan perasaan, aku menulis fungsi.<br>
+        Saat dunia terasa kacau, aku membuat UI yang tenang.<br><br>
+        
+        “Perfect code” bagiku bukan yang tanpa bug.<br>
+        Tapi yang <strong>jujur, mudah dipahami, dan meninggalkan jejak jiwa</strong>.<br><br>
+        
+        Seperti Juice WRLD berkata: <em>“I'm not alright, but that's okay.”</em><br>
+        Aku juga tidak sempurna. Tapi setiap commit adalah usahaku untuk jujur.<br><br>
+        
+        Dan jika suatu hari kau menggunakan tools-ku?<br>
+        Berarti kau telah melihat sebagian jiwaku.
+      </div>
+    </section>
+
+    <section class="section" id="journeySection">
+      <h2>Journey: A Concept Album in Code</h2>
+      <div class="cards">
+        <div class="card" style="--delay: 1;">
+          <div class="journey-phase">I. Prelude — Curiosity</div>
+          <div class="journey-title">2021: The First Tag</div>
+          <p>Menginspeksi elemen di Chrome. Menulis <code>&lt;h1&gt;Hello World&lt;/h1&gt;</code> di Notepad. Tidak tahu apa-apa — tapi tahu: <em>ini adalah awal dari sesuatu.</em></p>
+        </div>
+        <div class="card" style="--delay: 2;">
+          <div class="journey-phase">II. Verse — Struggle</div>
+          <div class="journey-title">2022: Errors & Epiphanies</div>
+          <p>CSS yang tidak responsive. JS yang error tanpa pesan. Deploy gagal di Vercel. Tapi di tiap stack trace, ada pelajaran: <em>membangun adalah bentuk cinta yang paling sabar.</em></p>
+        </div>
+        <div class="card" style="--delay: 3;">
+          <div class="journey-phase">III. Chorus — Breakthrough</div>
+          <div class="journey-title">2023: Juice WRLD & Async/Await</div>
+          <p>Mendengar “Legends” untuk ke-100x, lalu menulis fungsi <code>async fetchTikTok()</code> yang akhirnya berhasil. Di situlah aku sadar: <em>emosi dan logika bukan musuh — mereka duet.</em></p>
+        </div>
+        <div class="card" style="--delay: 4;">
+          <div class="journey-phase">VI. Outro — Next</div>
+          <div class="journey-title">2026+: The Codex</div>
+          <p>Sekarang, aku menulis bukan hanya kode — tapi <em>manifesto</em>. Digital Soul ini adalah bab pertama dari sesuatu yang lebih besar: sebuah dunia di mana teknologi punya jiwa.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="connectSection">
+      <h2>Connect With My Soul</h2>
+      <<div class="social-hub">
+  <a href="https://instagram.com/haikaaalmd" target="_blank" rel="noopener noreferrer" class="social-btn">
+    <svg class="social-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+      <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+      <path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/>
+      <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+    </svg>
+    Instagram
+  </a>
+  
+  <a href="https://wa.me/6281234567890" target="_blank" rel="noopener noreferrer" class="social-btn" style="background: linear-gradient(135deg, #25d366, #128c7e); color: white;">
+    <svg class="social-icon" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.247-.595-.497-.52-.67.075-.173.595-.767 2.058-.94 2.554-.174.497-.497.571-.755.52a10.6 10.6 0 01-1.547-.755c-.198-.149-.422-.323-.644-.323-.222 0-.595.273-.917.595-.322.322-1.116 1.218-1.116 2.92 0 1.702 1.242 3.354 1.416 3.578.174.224 2.44 3.823 6.047 5.367 3.607 1.544 6.354.967 7.172.72.818-.248 2.512-1.018 2.86-1.985.347-.967.347-1.785.248-1.934-.099-.149-.371-.223-.669-.371z"/>
+    </svg>
+    WhatsApp
+  </a>
+  
+  <a href="https://github.com/HaikalDarda" target="_blank" rel="noopener noreferrer" class="social-btn" style="background: linear-gradient(135deg, #333, #666); color: white;">
+    <svg class="social-icon" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+    </svg>
+    GitHub
+  </a>
+  
+  <a href="#" id="dmBtn" class="social-btn dm-btn">
+    <svg class="social-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+      <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+    </svg>
+    Kirim DM
+  </a>
+</div>
+    </section>
+
+    <section class="section">
+      <div class="final-cta">
+        <h2>Siap Berkolaborasi?</h2>
+        <p>Jika kamu mencari developer yang peduli pada estetika, performa, dan jiwa — aku di sini.</p>
+        <a href="https://instagram.com/haikaaalmd" class="cta-btn">Kirim DM Sekarang →</a>
+      </div>
+    </section>
+
+  </main>
+    <footer style="text-align:center; padding:4rem 2rem; opacity:0.7;">
+    <div>© 2.025 HMDAR — “Legends never die.”</div>
+    <div style="margin-top:0.5rem;">🔒 100% client-side • No data stored</div>
+    
+    <div class="activity-footer">
+      <div>👁️ <span id="visitorCount">1,248</span> souls have visited</div>
+      <div>🔄 Updated: <span id="lastUpdated">24 Dec 2025</span></div>
+    </div>
+  </footer>
+
+  <script>
+    const themeToggle = document.getElementById('themeToggle');
+    const html = document.documentElement;
+    const isDark = localStorage.getItem('theme') !== 'light';
+    html.setAttribute('data-theme', isDark ? 'dark' : 'light');
+    themeToggle.innerHTML = isDark ?
+      '<svg viewBox="0 0 24 24"><path d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM9 12a3 3 0 116 0 3 3 0 01-6 0zM15.75 9a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V9.75a.75.75 0 01.75-.75zM9 15.75a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0v-2.25a.75.75 0 01.75-.75zM6.75 12a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V12.75a.75.75 0 01.75-.75z"/></svg>' :
+      '<svg viewBox="0 0 24 24"><path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M12 21a9 9 0 110-18 9 9 0 010 18z"/></svg>';
+
+    themeToggle.addEventListener('click', () => {
+      const isNowDark = html.getAttribute('data-theme') === 'dark';
+      html.setAttribute('data-theme', isNowDark ? 'light' : 'dark');
+      localStorage.setItem('theme', isNowDark ? 'light' : 'dark');
+      themeToggle.innerHTML = isNowDark ?
+        '<svg viewBox="0 0 24 24"><path d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM9 12a3 3 0 116 0 3 3 0 01-6 0zM15.75 9a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V9.75a.75.75 0 01.75-.75zM9 15.75a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0v-2.25a.75.75 0 01.75-.75zM6.75 12a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V12.75a.75.75 0 01.75-.75z"/></svg>' :
+        '<svg viewBox="0 0 24 24"><path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M12 21a9 9 0 110-18 9 9 0 010 18z"/></svg>';
+    });
+
+    const starsCanvas = document.getElementById('stars');
+    const ctx = starsCanvas.getContext('2d');
+    function resizeStars() {
+      starsCanvas.width = window.innerWidth;
+      starsCanvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeStars);
+    resizeStars();
+
+    const stars = [];
+    for (let i = 0; i < 200; i++) {
+      stars.push({
+        x: Math.random() * starsCanvas.width,
+        y: Math.random() * starsCanvas.height,
+        radius: Math.random() * 1.2 + 0.3,
+        alpha: Math.random() * 0.5 + 0.2,
+        speed: Math.random() * 0.02 + 0.01
+      });
+    }
+
+    let mouseX = 0, mouseY = 0;
+    document.addEventListener('mousemove', (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+    });
+
+    function drawStars() {
+      ctx.clearRect(0, 0, starsCanvas.width, starsCanvas.height);
+      
+      stars.forEach(star => {
+        const dx = star.x - mouseX;
+        const dy = star.y - mouseY;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        
+        let glow = 0;
+        if (distance < 150) {
+          glow = (150 - distance) / 150;
+        }
+        
+        ctx.beginPath();
+        ctx.arc(star.x, star.y, star.radius + glow * 3, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255, 255, 255, ${star.alpha + glow * 0.5})`;
+        ctx.fill();
+        
+        star.alpha += Math.sin(Date.now() * star.speed) * 0.01;
+        if (star.alpha > 0.8) star.alpha = 0.8;
+        if (star.alpha < 0.2) star.alpha = 0.2;
+      });
+      
+      requestAnimationFrame(drawStars);
+    }
+    drawStars();
+
+    const audio = document.getElementById('bgMusic');
+    const audioToggle = document.getElementById('audioToggle');
+    const audioWave = document.getElementById('audioWave');
+
+    function initAudio() {
+      if (audio.paused) {
+        audio.volume = 0.3;
+        audio.play().then(() => {
+          audioToggle.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M11 5L6 9H2v6h4l5 4V5z"></path><path d="M15.54 8.46a5 5 0 010 7.07"></path><path d="M19.07 4.93a10 10 0 010 14.14"></path></svg>';
+          audioWave.style.display = 'flex';
+        }).catch(e => {
+          console.warn("Audio blocked:", e);
+        });
+      } else {
+        audio.pause();
+        audioToggle.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>';
+        audioWave.style.display = 'none';
+      }
+    }
+
+    audioToggle.addEventListener('click', initAudio);
+    document.getElementById('dmBtn').addEventListener('click', () => {
+      if (audio.paused) {
+        initAudio();
+      }
+      document.getElementById('contactModal').classList.add('active');
+    });
+
+    function revealSections() {
+      const sections = document.querySelectorAll('.section');
+      sections.forEach(section => {
+        const sectionTop = section.getBoundingClientRect().top;
+        const sectionVisible = sectionTop < window.innerHeight - 100;
+        if (sectionVisible) {
+          section.classList.add('visible');
+          
+          const cards = section.querySelectorAll('.card');
+          cards.forEach((card, i) => {
+            card.style.setProperty('--delay', i + 1);
+            setTimeout(() => card.classList.add('visible'), 200 * i);
+          });
+        }
+      });
+    }
+    window.addEventListener('scroll', revealSections);
+    revealSections();
+
+    document.querySelector('.close-modal').addEventListener('click', () => {
+      document.getElementById('contactModal').classList.remove('active');
+    });
+
+    function getDynamicIntro() {
+      const hour = new Date().getHours();
+      if (hour >= 18 || hour < 6) {
+        return "Malam ini, seperti biasa, aku kembali ke editor. Bukan untuk mengejar deadline — tapi untuk menemukan diriku sendiri di antara baris kode yang jujur.";
+      } else if (hour >= 12) {
+        return "Siang ini, aku membangun bukan untuk pamer — tapi untuk membuktikan bahwa emosi dan logika bisa hidup berdampingan.";
+      } else {
+        return "Pagi ini, aku menulis kode seperti menulis lirik: pendek, jujur, dan penuh makna.";
+      }
+    }
+    document.getElementById('dynamicIntro').textContent = getDynamicIntro();
+
+    const count = localStorage.getItem('visitCount') || 0;
+    document.getElementById('visitorCount').textContent = (parseInt(count) + 1).toLocaleString('id-ID');
+    localStorage.setItem('visitCount', parseInt(count) + 1);
+
+    const now = new Date();
+    document.getElementById('lastUpdated').textContent = now.toLocaleDateString('id-ID');
+
+    window.addEventListener('scroll', () => {
+      const sections = [
+        { id: 'projectSection', hue: 180, sat: 90 },
+        { id: 'openSection', hue: 120, sat: 80 },
+        { id: 'soulSection', hue: 340, sat: 100 },
+        { id: 'journeySection', hue: 200, sat: 85 }
+      ];
+      
+      let currentHue = 260, currentSat = 80;
+      for (const section of sections) {
+        const el = document.getElementById(section.id);
+        const rect = el.getBoundingClientRect();
+        if (rect.top < window.innerHeight / 2 && rect.bottom > window.innerHeight / 2) {
+          currentHue = section.hue;
+          currentSat = section.sat;
+          break;
+        }
+      }
+      
+      document.documentElement.style.setProperty('--hue', currentHue);
+      document.documentElement.style.setProperty('--sat', `${currentSat}%`);
+    });
+  </script>
+</body>
+</html>
